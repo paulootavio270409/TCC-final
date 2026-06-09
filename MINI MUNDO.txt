@@ -1,0 +1,16 @@
+SITE DE POSTAGEM
+
+um professor tem um site onde os alunos possam postar
+atividades e trabalhos, além de que o professor pode
+postar avisos, os alunos precisam do nome, email, 
+uma senha e a sala a qual pertencem
+
+ENTIDADES
+-Professor
+-Aluno 
+-Atividade
+-Turma
+
+RELACIONAMENTO
+-Postar
+-Entrega

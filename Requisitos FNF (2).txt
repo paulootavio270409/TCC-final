@@ -1,0 +1,23 @@
+RF01 – Cadastrar Professor: O sistema deve permitir o cadastro de professores, armazenando obrigatoriamente Nome, Idade e E-mail, gerando um identificador único (professor_ID).
+
+RF02 – Associar Professor à Turma: O sistema deve permitir vincular um professor a uma ou mais turmas.
+
+RF03 – Criar Turma: O sistema deve permitir a criação de turmas, registrando o Ano Letivo e associando o ID da turma.
+
+RF04 – Matricular Aluno: O sistema deve permitir matricular alunos em turmas através da entidade Matriculas, associando um turma_id a um aluno_id para criar um registro único (turma_aluno).
+
+RF05 – Cadastrar Aluno: O sistema deve permitir o cadastro de alunos, armazenando Nome, Idade e E-mail, gerando um identificador único (aluno_ID).
+
+RF06 – Postar Atividade: O sistema deve permitir que as turmas tenham atividades postadas, registrando a descrição/título da Atividade, a Data de Postagem e a Nota máxima atribuída a ela.
+
+RF07 – Registrar Entrega de Atividade: O sistema deve permitir que os alunos realizem entregas de atividades, registrando a Data de Entrega, o Status da entrega (ex: pendente, entregue, atrasado) e Comentários adicionais.
+
+Requisitos Não Funcionais
+
+RNF01 – Proteção de Dados Pessoais: O armazenamento de dados dos alunos e professores (especialmente Nome e E-mail) deve cumprir as regulamentações de proteção de dados vigentes (como a LGPD), garantindo criptografia em repouso e em trânsito.
+
+RNF02 – Controle de Acesso (Autenticação/Autorização): O sistema deve garantir que apenas professores possam postar atividades e atribuir notas, e apenas alunos visualizem suas respectivas turmas e realizem entregas.
+
+RNF03 – Tempo de Resposta: Consultas básicas (como listar os alunos de uma turma ou buscar as atividades pendentes) devem responder em menos de 2 segundos, mesmo com o crescimento do banco de dados.
+
+RNF04 – Indexação: Os campos utilizados frequentemente em junções (como aluno_id e turma_id na tabela de Matrículas) devem ser indexados para otimizar a performance do banco de dados relacional.
