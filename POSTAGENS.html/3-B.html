@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9-B</title>
+
+    <style>
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            color: white;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidebar a {
+            padding: 10px 25px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+            border-bottom: 1px solid #222;
+        }
+
+        .sidebar a:hover { color: #f1f1f1; background: #2d5a27; }
+        .sidebar .closebtn { position: absolute; top: 0; right: 25px; font-size: 36px; }
+        .sidebar-title { color: white; text-align: center; font-weight: bold; margin-bottom: 20px; }
+
+        .fachada {
+            width: 100%;
+            background-color: #2d5a27;
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border-bottom: 5px solid #1e3d1a;
+        }
+
+        :root {
+            --primary: #007bff;
+            --success: #28a745;
+            --danger: #dc3545;
+            --bg: #e9ecef;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stats {
+            text-align: center;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 20px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .media {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+
+        .file-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #333;
+            border-radius: 4px;
+        }
+        
+        .info-permissao {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="main">
+        <span class="menu-btn" onclick="openNav()">&#9776; SALAS</span>
+    </div>
+
+    <div id="mySidebar" class="sidebar">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="home.html">🏠 Home (Todas)</a>
+      <a href="3-B.html">Turma 3-B</a>
+      <a href="3-A.html">Turma 3-A</a>
+      <a href="2-B.html">Turma 2-B</a>
+      <a href="2-A.html">Turma 2-A</a>
+      <a href="1-B.html">Turma 1-B</a>
+      <a href="1-A.html">Turma 1-A</a>
+      <a href="9-B.html">Turma 9-B</a>
+      <a href="9-A.html">Turma 9-A</a>
+    </div>
+
+<!-- A TELA DE LOGIN FOI CONFIGURADA PARA FICAR ESCONDIDA POR PADRÃO -->
+<div id="login" class="container" style="display:none;">
+    <h3>Área de Login / Cadastro</h3>
+    <input id="nome" placeholder="Nome">
+    <input id="email" placeholder="Email">
+    <input id="senha" type="password" placeholder="Senha">
+    <button class="btn" onclick="login()">Entrar</button>
+    <button class="btn" style="background:#007bff; margin-left:10px;" onclick="criarConta()">Criar Conta</button>
+    <button class="btn" style="background:#6c757d; margin-left:10px;" onclick="voltarParaMural()">Voltar ao Mural</button>
+</div>
+
+<!-- A TELA DO APP (POSTAGENS) AGORA APARECE DIRETO -->
+<div id="app">
+
+    <div class="container stats">
+        <h3>Mural da Turma</h3>
+        <p>Atualmente temos <strong id="postContador">0</strong> postagens compartilhadas!</p>
+    </div>
+
+    <div class="container">
+        <div>
+            Olá, <strong id="userNome">Visitante</strong>!
+            <!-- Botão adaptado para alternar entre Login ou Sair dependendo do status -->
+            <button id="authBtn" class="btn" style="float: right; padding: 5px 10px; margin-top:0;" onclick="gerenciarAutenticacao()">Identificar-se</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h3>Nova Postagem</h3>
+        <select id="turma">
+            <option value="GERAL">Todas</option>
+            <option>9-A</option><option>9-B</option>
+            <option>1-A</option><option>1-B</option>
+            <option>2-A</option><option>2-B</option>
+            <option>3-A</option><option>3-B</option>
+        </select>
+        <input id="titulo" placeholder="Título (opcional)">
+        <textarea id="texto" placeholder="Escreva algo..."></textarea>
+        <input id="link" placeholder="Link (opcional)">
+        <input type="file" id="file">
+        <p class="info-permissao">Arquivos podem ser lidos por você e pelo administrador.</p>
+        <button class="btn" onclick="postar()">Publicar</button>
+    </div>
+
+    <div class="container">
+        <h3>Mural</h3>
+        <div id="mural"></div>
+    </div>
+
+</div>
+
+
+<script>
+
+const ADMIN = {
+    email: "paulootaviopintoabreu@gmail.com",
+    senha: "PauloeClaudia@maceio2025"
+};
+
+let user = null;
+let filtroTurmaAtual = "3-B"; 
+
+function openNav(){
+    document.getElementById("mySidebar").style.width = "250px";
+}
+
+function closeNav(){
+    document.getElementById("mySidebar").style.width = "0";
+}
+
+function checarParametrosURL(){
+    const urlParams = new URLSearchParams(window.location.search);
+    const salaDaUrl = urlParams.get('sala');
+    if(salaDaUrl){
+        filtroTurmaAtual = salaDaUrl;
+    }
+    const selectTurma = document.getElementById('turma');
+    if(selectTurma) selectTurma.value = filtroTurmaAtual;
+}
+
+function atualizarContador(){
+    let db = JSON.parse(localStorage.getItem("db")) || [];
+    let dbFiltrado = db.filter(p => p.turma === filtroTurmaAtual || p.turma === "GERAL");
+    document.getElementById('postContador').innerText = dbFiltrado.length;
+}
+
+function login(){
+    const nomeInput = document.getElementById('nome').value;
+    const emailInput = document.getElementById('email').value;
+    const senhaInput = document.getElementById('senha').value;
+
+    if(!emailInput || !senhaInput) {
+        return alert("Preencha o e-mail e a senha para entrar!");
+    }
+
+    if(emailInput === ADMIN.email && senhaInput === ADMIN.senha){
+        user = { nome: "ADMIN", email: emailInput, role: "admin" };
+    } else {
+        let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+        const usuarioEncontrado = usuarios.find(u => u.email === emailInput && u.senha === senhaInput);
+
+        if(!usuarioEncontrado) {
+            return alert("E-mail ou senha incorretos! Se não tiver conta, clique em 'Criar Conta'.");
+        }
+
+        user = { nome: usuarioEncontrado.nome, email: usuarioEncontrado.email, role: "user" };
+    }
+
+    sessionStorage.setItem("user", JSON.stringify(user));
+    alert("Conta acessada com sucesso!");
+    window.location.href = "3-B.html";
+}
+
+function criarConta(){
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+
+    if(!nome || !email || !senha){
+        return alert("Preencha nome, email e senha para criar sua conta!");
+    }
+
+    let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const existe = usuarios.find(u => u.email === email);
+
+    if(existe){
+        return alert("Esse email já está cadastrado!");
+    }
+
+    const novoUsuario = { nome, email, senha };
+    usuarios.push(novoUsuario);
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+    user = { nome: nome, email: email, role: "user" };
+    sessionStorage.setItem("user", JSON.stringify(user));
+
+    alert("Conta criada com sucesso!");
+    window.location.href = "3-B.html";
+}
+
+// ALTERADO: Agora se adapta para exibir o mural diretamente
+function iniciar(){
+    checarParametrosURL();
+
+    user = JSON.parse(sessionStorage.getItem("user"));
+
+    // Se não houver ninguém logado, define automaticamente um perfil temporário de Visitante
+    if(!user){
+        user = { nome: "Visitante", email: "visitante@local", role: "guest" };
+    }
+
+    // Garante que o mural fique visível e o login escondido
+    document.getElementById('login').style.display = "none";
+    document.getElementById('app').style.display = "block";
+    document.getElementById('userNome').innerText = user.nome;
+
+    // Ajusta o botão superior direito
+    const authBtn = document.getElementById('authBtn');
+    if(user.role === "guest") {
+        authBtn.innerText = "Fazer Login";
+        authBtn.className = "btn";
+        authBtn.style.background = "var(--primary)";
+    } else {
+        authBtn.innerText = "Sair";
+        authBtn.className = "btn-danger";
+    }
+
+    carregar();
+}
+
+function gerenciarAutenticacao() {
+    if(user && user.role !== "guest") {
+        // Se estiver logado de verdade, faz o logout
+        sessionStorage.clear();
+        location.reload();
+    } else {
+        // Se for visitante, abre a tela de login
+        document.getElementById('app').style.display = "none";
+        document.getElementById('login').style.display = "block";
+    }
+}
+
+function voltarParaMural() {
+    document.getElementById('login').style.display = "none";
+    document.getElementById('app').style.display = "block";
+}
+
+async function postar(){
+    const texto = document.getElementById('texto').value;
+
+    if(!texto){
+        return alert("Escreva algo antes de postar!");
+    }
+
+    const fileInput = document.getElementById('file');
+    const file = fileInput.files[0];
+
+    const post = {
+        id: Date.now(),
+        turma: document.getElementById('turma').value,
+        autor: user.nome,
+        email: user.email,
+        titulo: document.getElementById('titulo').value,
+        texto: texto,
+        link: document.getElementById('link').value,
+        midia: file ? await toBase64(file) : null,
+        tipo: file ? file.type : null,
+        nomeArquivo: file ? file.name : null
+    };
+
+    let db = JSON.parse(localStorage.getItem("db")) || [];
+    db.push(post);
+    localStorage.setItem("db", JSON.stringify(db));
+
+    document.getElementById('titulo').value = "";
+    document.getElementById('texto').value = "";
+    document.getElementById('link').value = "";
+    fileInput.value = "";
+
+    carregar();
+}
+
+function carregar(){
+    const mural = document.getElementById("mural");
+    mural.innerHTML = "";
+
+    let db = JSON.parse(localStorage.getItem("db")) || [];
+    let dbFiltrado = db.filter(p => p.turma === filtroTurmaAtual || p.turma === "GERAL");
+
+    dbFiltrado.slice().reverse().forEach(p => {
+        let conteudoMidia = "";
+
+        if(p.midia){
+            if(p.tipo && p.tipo.includes("image")){
+                conteudoMidia = `<img src="${p.midia}" class="media">`;
+            } else if(p.tipo && p.tipo.includes("video")){
+                conteudoMidia = `<video src="${p.midia}" controls class="media"></video>`;
+            } else {
+                conteudoMidia = `
+                    <a href="${p.midia}" download="${p.nomeArquivo || 'arquivo'}" class="file-link">
+                        📁 Baixar arquivo: ${p.nomeArquivo || 'Clique aqui'}
+                    </a>
+                `;
+            }
+        }
+
+        // Visitantes não podem editar ou excluir nada (nem as próprias postagens de visitante para evitar bagunça)
+        const podeGerenciar = (user.role !== "guest" && (p.email === user.email || user.role === "admin"));
+
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+            <small><b>${p.autor}</b> - ${p.turma}</small>
+            ${p.titulo ? `<h4>${p.titulo}</h4>` : ""}
+            <p>${p.texto}</p>
+            ${p.link ? `<p><a href="${p.link}" target="_blank">Abrir link externo</a></p>` : ""}
+            ${conteudoMidia}
+            <div style="margin-top:10px;">
+                ${podeGerenciar ? `
+                    <button class="btn" style="background:#6c757d" onclick="editar(${p.id})">Editar</button>
+                    <button class="btn-danger" onclick="excluir(${p.id})">Excluir</button>
+                ` : ""}
+            </div>
+        `;
+
+        mural.appendChild(div);
+    });
+
+    atualizarContador();
+}
+
+function editar(id){
+    let db = JSON.parse(localStorage.getItem("db"));
+    let index = db.findIndex(p => p.id === id);
+    let item = db[index];
+
+    let novo = prompt("Editar texto da postagem:", item.texto);
+    if(novo !== null){
+        db[index].texto = novo;
+        localStorage.setItem("db", JSON.stringify(db));
+        carregar();
+    }
+}
+
+function excluir(id){
+    if(!confirm("Deseja excluir esta postagem?")) return;
+
+    let db = JSON.parse(localStorage.getItem("db"));
+    db = db.filter(p => p.id !== id);
+    localStorage.setItem("db", JSON.stringify(db));
+    carregar();
+}
+
+function toBase64(file){
+    return new Promise((res, rej)=>{
+        let r = new FileReader();
+        r.readAsDataURL(file);
+        r.onload = ()=>res(r.result);
+        r.onerror = err => rej(err);
+    });
+}
+
+window.onload = iniciar;
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icone.png" type="image/jpeg">
+    <title>SISTEMA DE POSTAGENS</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --admin-color: #7209b7;
+            --success: #2ec4b6;
+            --history-green: #1a4329;
+            --radius: 12px;
+            --primary: #4361ee;
+            --primary-hover: #3a56d4;
+            --admin-color: #7209b7;
+            --admin-hover: #60079a;
+            --success: #2ec4b6;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --bg-body: #f4f6f9;
+            --history-green: #1a4329;
+            --atividade: #f77f00;
+            --radius: 12px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+body { 
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+    
+    /* Configurações de imagem de fundo */
+    background-image: url('sala1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-color: rgba(0, 0, 0, 0.6);
+    background-blend-mode: darken;
+
+    color: white; /* Alterado para branco para melhor contraste no fundo escuro */
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: 0; 
+    margin: 0; 
+    min-height: 100vh; 
+    -webkit-font-smoothing: antialiased;
+}
+
+.container, .card {
+    color: #212529 !important; /* Força o texto nos cartões a ser escuro */
+}
+
+        /* Menu Hambúrguer Moderno */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: var(--radius);
+            background: var(--admin-color);
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 4px 15px rgba(114, 9, 183, 0.3);
+            transition: var(--transition);
+        }
+        .menu-toggle:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(114, 9, 183, 0.4);
+            background: var(--admin-hover);
+        }
+
+        /* Sidebar Elegante */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 260px;
+            height: 100vh;
+            background: #11141a;
+            padding-top: 90px;
+            transition: var(--transition);
+            z-index: 1500;
+            box-shadow: 10px 0 40px rgba(0,0,0,0.3);
+        }
+        .sidebar.active { left: 0; }
+        .sidebar h3 {
+            color: rgba(255, 255, 255, 0.6);
+            text-align: left;
+            padding: 0 25px;
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .sidebar a {
+            display: block;
+            color: #e0e0e0;
+            text-decoration: none;
+            padding: 14px 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+        .sidebar a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-left-color: var(--admin-color);
+            padding-left: 30px;
+        }
+
+        /* Rodapé Refinado */
+        .meu-rodape {
+            width: 100%;
+            background-color: #11141a; 
+            color: #ffffff;
+            padding: 35px 0;
+            margin-top: auto;
+            border-top: 4px solid var(--history-green);
+        }
+        .meu-rodape .conteudo {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 0 20px;
+        }
+        .meu-rodape p {
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Cabeçalho de Impacto */
+        .fachada {
+            width: 100%;
+            background: linear-gradient(135deg, var(--history-green), #0f2b1a);
+            color: white;
+            text-align: center;
+            padding: 50px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .fachada h1 { 
+            margin: 0; 
+            font-size: 2.5rem; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+            font-weight: 800;
+        }
+        .fachada h2 { 
+            font-size: 1rem; 
+            max-width: 600px; 
+            margin: 12px auto 0 auto; 
+            padding: 0 20px; 
+            font-weight: 400; 
+            opacity: 0.75; 
+            letter-spacing: 1px;
+        }
+
+        /* Containers Gerais */
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: var(--radius); 
+            box-shadow: var(--shadow); 
+            width: 100%; 
+            max-width: 600px; 
+            margin-bottom: 25px; 
+            box-sizing: border-box; 
+            transition: var(--transition);
+        }
+
+        /* Seções Escondidas/Especiais */
+        .admin-section { border: 1px solid rgba(114, 9, 183, 0.2); background: #fdfaff; display: none; }
+        .aluno-section { border: 1px solid rgba(46, 196, 182, 0.2); background: #f7fdfd; display: none; } 
+
+        /* Badges Minimalistas */
+        .badge-admin, .badge-user, .badge-atividade, .badge-contador { 
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px; 
+        }
+        .badge-admin { background: rgba(114, 9, 183, 0.1); color: var(--admin-color); }
+        .badge-user { background: rgba(46, 196, 182, 0.1); color: #1e847b; }
+        .badge-atividade { background: rgba(247, 127, 0, 0.1); color: var(--atividade); } 
+        .badge-contador { background: var(--primary); color: white; border-radius: 20px; font-size: 0.8rem; margin-bottom: 0; padding: 6px 14px; }
+
+        /* Elementos de Formulários Modernos */
+        .input-group { display: flex; flex-direction: column; gap: 15px; }
+        .input-group h3 { margin: 0 0 5px 0; font-size: 1.2rem; font-weight: 700; }
+        
+        input, select, textarea { 
+            padding: 12px 16px; 
+            border: 1px solid #e0e0e0; 
+            border-radius: 8px; 
+            font-family: inherit; 
+            font-size: 0.95rem;
+            background: #fafafa;
+            transition: var(--transition);
+            outline: none;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.15);
+        }
+        textarea { resize: vertical; min-height: 100px; }
+
+        /* Botões Repaginados */
+        button { 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        button:active { transform: scale(0.98); }
+
+        .btn-admin { background-color: var(--admin-color); color: white; width: 100%; }
+        .btn-admin:hover { background-color: var(--admin-hover); }
+        
+        .btn-user { background-color: var(--success); color: white; width: 100%; }
+        .btn-user:hover { background-color: #24a195; }
+        
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        
+        .container-botoes { display: flex; gap: 12px; }
+        .container-botoes button { flex: 1; }
+
+        /* Cards do Mural de Postagens */
+        .card { 
+            background: white; 
+            padding: 24px; 
+            border-radius: var(--radius); 
+            margin-bottom: 20px; 
+            box-shadow: var(--shadow); 
+            position: relative; 
+            border-left: 6px solid var(--success); 
+            transition: var(--transition);
+            box-sizing: border-box;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
+        .card-admin { border-left-color: var(--admin-color); }
+        .card-atividade { border-left-color: var(--atividade); } 
+        
+        .card h4 { margin: 12px 0 8px 0; font-size: 1.3rem; color: #1a1a1a; font-weight: 700; }
+        .card p { margin: 0 0 15px 0; font-size: 1rem; color: #4a5568; line-height: 1.6; }
+        .card small { color: #718096; font-size: 0.85rem; }
+
+        /* Mídias no Mural */
+        .media-content { 
+            width: 100%; 
+            max-height: 350px; 
+            border-radius: 8px; 
+            margin: 15px 0; 
+            object-fit: cover; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .news-link { 
+            color: var(--primary); 
+            font-weight: 600; 
+            text-decoration: none; 
+            display: inline-flex; 
+            align-items: center;
+            margin-top: 5px; 
+            font-size: 0.95rem;
+        }
+        .news-link:hover { text-decoration: underline; }
+
+        /* Telas da Aplicação */
+        #loginScreen { display: block; margin-top: 20px; }
+        #appScreen { display: none; width: 100%; max-width: 800px; padding: 20px; box-sizing: border-box; }
+        
+        /* Cabeçalho do App Logado */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            width: 100%; 
+            margin-bottom: 25px; 
+            align-items: center; 
+            background: white; 
+            padding: 20px; 
+            border-radius: var(--radius); 
+            box-shadow: var(--shadow);
+            box-sizing: border-box;
+        }
+        .header span { font-size: 1.1rem; color: #4a5568; }
+        .header strong { color: var(--dark); font-weight: 700; }
+        #userRole { font-size: 0.85rem; font-weight: 600; margin-top: 4px; color: #718096; }
+
+        /* Ações e Links rápidos dos Cards */
+        .actions { margin-top: 15px; display: flex; gap: 15px; border-top: 1px solid #f0f0f0; padding-top: 15px; }
+        .btn-action { background: none; font-size: 13px; font-weight: 600; text-decoration: none; padding: 0; width: auto; cursor: pointer; }
+        .btn-action:hover { opacity: 0.8; }
+
+        /* Topo do Mural */
+        .mural-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            background: white; 
+            padding: 15px 20px; 
+            border-radius: var(--radius); 
+            box-shadow: var(--shadow); 
+        }
+        .mural-header h3 { margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--dark); }
+
+        /* Responsividade Avançada */
+        @media (max-width: 768px) {
+            .header { flex-direction: column; gap: 15px; text-align: center; }
+            .header div style { width: 100%; justify-content: center; }
+            .mural-header { flex-direction: column; gap: 10px; text-align: center; }
+            .container-botoes { flex-direction: column; }
+            .fachada h1 { font-size: 2rem; }
+        }
+    </style>
+
+
+</head>
+<body>
+    
+
+    <button id="menuToggle" class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <div id="adminSidebar" class="sidebar">
+        <h3>FILTRAR MURAL</h3>
+        <a onclick="filtrarMuralAdmin('TODOS')">🌍 Ver Geral</a>
+        <a onclick="filtrarMuralAdmin('9-A')"> Sala 9-A</a>
+        <a onclick="filtrarMuralAdmin('9-B')"> Sala 9-B</a>
+        <a onclick="filtrarMuralAdmin('1-A')"> Sala 1-A</a>
+        <a onclick="filtrarMuralAdmin('1-B')"> Sala 1-B</a>
+        <a onclick="filtrarMuralAdmin('2-A')"> Sala 2-A</a>
+        <a onclick="filtrarMuralAdmin('2-B')"> Sala 2-B</a>
+        <a onclick="filtrarMuralAdmin('3-A')"> Sala 3-A</a>
+        <a onclick="filtrarMuralAdmin('3-B')">Sala 3-B</a>
+    </div>
+
+    <header class="fachada" id="siteHeader">
+        <h1>SITE DE POSTAGENS</h1>
+        <h2 id="subtituloPrincipal">PAINEL PRINCIPAL DO SISTEMA</h2>
+    </header>
+
+    <div id="loginScreen" class="container">
+        <h2 style="margin-top: 0; margin-bottom: 20px; font-weight: 800; font-size: 1.6rem; text-align: center;">Login / Cadastro</h2>
+        <div class="input-group">
+            <input type="text" id="nameInput" placeholder="Nome Completo">
+            <input type="email" id="emailInput" placeholder="Email">
+            <input type="password" id="passInput" placeholder="Senha">
+            
+            <select id="loginTurma">
+                <option value="" disabled selected>Selecione o seu Ano/Turma</option>
+                <option value="3-A">3-A</option>
+                <option value="3-B">3-B</option>
+                <option value="2-A">2-A</option>
+                <option value="2-B">2-B</option>
+                <option value="1-A">1-A</option>
+                <option value="1-B">1-B</option>
+                <option value="9-A">9-A</option>
+                <option value="9-B">9-B</option>
+            </select>
+
+            <div class="container-botoes">
+                <button class="btn-user" onclick="tentarLogin()">Entrar</button>
+                <button class="btn-primary" onclick="criarConta()">Criar Conta</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="appScreen">
+        <div class="header">
+            <div>
+                <span>Bem-vindo, <strong id="userName"></strong></span>
+                <div id="userRole"></div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button onclick="excluirMinhaConta()" style="background:var(--danger); color:white; font-size: 0.85rem; padding: 8px 14px;">Excluir Conta</button>
+                <button onclick="logout()" style="background:#6c757d; color:white; font-size: 0.85rem; padding: 8px 14px;">Sair</button>
+            </div>
+        </div>
+
+        <div id="adminPanel" class="container admin-section">
+            <span class="badge-admin">PAINEL DE CONTROLE - APENAS ADM</span>
+            <div class="input-group">
+                <h3>Postar Notícia Oficial</h3>
+                <select id="newsTurma">
+                    <option value="GERAL">Para todas as turmas</option>
+                    <option value="3-A">3-A</option>
+                    <option value="3-B">3-B</option>
+                    <option value="2-A">2-A</option>
+                    <option value="2-B">2-B</option>
+                    <option value="1-A">1-A</option>
+                    <option value="1-B">1-B</option>
+                    <option value="9-A">9-A</option>
+                    <option value="9-B">9-B</option>
+                </select>
+                <input type="text" id="newsTitle" placeholder="Título da Notícia/Aviso">
+                <textarea id="newsContent" placeholder="Conteúdo da notícia..."></textarea>
+                <input type="url" id="newsUrl" placeholder="Link externo (opcional)">
+                <input type="file" id="newsFile" accept="image/*,video/*" style="background: transparent; border: 1px dashed #ccc; padding: 10px;">
+                <button class="btn-admin" onclick="postarNoticia()">Publicar Oficialmente</button>
+            </div>
+        </div>
+
+        <div id="alunoPanel" class="container aluno-section">
+            <span class="badge-user">ÁREA DO ALUNO</span>
+            <div class="input-group">
+                <h3>Postar Atividade na Sala</h3>
+                <input type="text" id="ativTitle" placeholder="Título da Atividade (Ex: Trabalho de História)">
+                <textarea id="ativContent" placeholder="Descreva sua atividade ou deixe um recado..."></textarea>
+                <input type="url" id="ativUrl" placeholder="Link para documento/drive (opcional)">
+                <input type="file" id="ativFile" accept="image/*,video/*,application/pdf" style="background: transparent; border: 1px dashed #ccc; padding: 10px;">
+                <button class="btn-user" onclick="postarAtividade()">Enviar Atividade</button>
+            </div>
+        </div>
+
+        <div style="width: 100%;">
+            <div class="mural-header">
+                <h3 id="muralTitulo">Mural de Avisos</h3>
+                <span id="contadorPostagens" class="badge-contador">0 atividades de alunos</span>
+            </div>
+            <div id="mural"></div>
+        </div>
+    </div>
+
+    <footer class="meu-rodape">
+        <div class="conteudo">
+            <p>POST SITE <span id="ano-atual"></span></p>
+        </div>
+    </footer>
+
+   <script>
+    const ADMIN_DATA = { email: "paulootaviopintoabreu@gmail.com", pass: "PauloeClaudia@maceio2025", nome: "Paulo Otávio" };
+    let user = null;
+    let filtroFixoAdmin = "TODOS";
+
+    function toggleSidebar() {
+        document.getElementById('adminSidebar').classList.toggle('active');
+    }
+
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('adminSidebar');
+        const button = document.getElementById('menuToggle');
+        
+        if (sidebar && button) {
+            if (!sidebar.contains(event.target) && !button.contains(event.target)) {
+                sidebar.classList.remove('active');
+            }
+        }
+    });
+
+    function atualizarTurmaPorTempo(turmaOriginal, anoCadastro) {
+        const anoAtual = new Date().getFullYear();
+        const diferencaAnos = anoAtual - anoCadastro;
+
+        if (diferencaAnos <= 0) return turmaOriginal;
+
+        const progressao = {
+            "9-A": ["9-A", "1-A", "2-A", "3-A"],
+            "9-B": ["9-B", "1-B", "2-B", "3-B"],
+            "1-A": ["1-A", "2-A", "3-A"],
+            "1-B": ["1-B", "2-B", "3-B"],
+            "2-A": ["2-A", "3-A"],
+            "2-B": ["2-B", "3-B"],
+            "3-A": ["3-A"],
+            "3-B": ["3-B"]
+        };
+
+        const listaCaminho = progressao[turmaOriginal];
+        if (!listaCaminho) return turmaOriginal;
+
+        if (diferencaAnos >= listaCaminho.length) {
+            return listaCaminho[listaCaminho.length - 1]; 
+        }
+
+        return listaCaminho[diferencaAnos];
+    }
+
+    function criarConta() {
+        const nome = document.getElementById('nameInput').value.trim();
+        const email = document.getElementById('emailInput').value.trim();
+        const pass = document.getElementById('passInput').value;
+        const turma = document.getElementById('loginTurma').value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!nome) return alert("Por favor, preencha seu nome completo para criar a conta!");
+        if (!emailRegex.test(email)) return alert("Por favor, insira um e-mail válido.");
+        if (!pass || pass.length < 4) return alert("A senha deve ter pelo menos 4 caracteres.");
+        if (!turma) return alert("Por favor, selecione a sua Turma/Ano!");
+
+        if (email === ADMIN_DATA.email) {
+            return alert("Este e-mail está reservado para o administrador do sistema.");
+        }
+
+        let usuariosCadastrados = JSON.parse(localStorage.getItem('db_usuarios')) || [];
+
+        const emailExiste = usuariosCadastrados.some(user => user.email === email);
+        if (emailExiste) {
+            return alert("Este e-mail já está cadastrado! Tente fazer login.");
+        }
+
+        const anoAtual = new Date().getFullYear();
+        const novoUsuario = { nome, email, pass, turma, role: 'user', anoCadastro: anoAtual };
+        
+        usuariosCadastrados.push(novoUsuario);
+        localStorage.setItem('db_usuarios', JSON.stringify(usuariosCadastrados));
+
+        alert("Conta criada com sucesso! Você já pode clicar em 'Entrar'.");
+    }
+
+    function tentarLogin() {
+        const email = document.getElementById('emailInput').value.trim();
+        const pass = document.getElementById('passInput').value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) return alert("Por favor, insira um e-mail válido.");
+        if (!pass) return alert("Por favor, digite sua senha.");
+
+        if (email === ADMIN_DATA.email && pass === ADMIN_DATA.pass) {
+            user = { nome: ADMIN_DATA.nome, role: 'admin', email: email, turma: 'TODAS' };
+            sessionStorage.setItem('sessao', JSON.stringify(user));
+            render();
+            return;
+        }
+
+        let usuariosCadastrados = JSON.parse(localStorage.getItem('db_usuarios')) || [];
+        const indexUsuario = usuariosCadastrados.findIndex(u => u.email === email && u.pass === pass);
+
+        if (indexUsuario !== -1) {
+            let usuarioEncontrado = usuariosCadastrados[indexUsuario];
+
+            if (!usuarioEncontrado.anoCadastro) {
+                usuarioEncontrado.anoCadastro = new Date().getFullYear();
+            }
+
+            const novaTurma = atualizarTurmaPorTempo(usuarioEncontrado.turma, usuarioEncontrado.anoCadastro);
+            
+            if (novaTurma !== usuarioEncontrado.turma) {
+                alert(`🎉 Ano Letivo Atualizado! Você foi promovido para a sala ${novaTurma}.`);
+                usuarioEncontrado.turma = novaTurma;
+                usuariosCadastrados[indexUsuario] = usuarioEncontrado;
+                localStorage.setItem('db_usuarios', JSON.stringify(usuariosCadastrados));
+            }
+
+            user = { 
+                nome: usuarioEncontrado.nome, 
+                role: usuarioEncontrado.role, 
+                email: usuarioEncontrado.email, 
+                turma: usuarioEncontrado.turma 
+            };
+            sessionStorage.setItem('sessao', JSON.stringify(user));
+            render();
+        } else {
+            alert("E-mail ou senha incorretos! Se você for novo, preencha todos os campos e clique em 'Criar Conta'.");
+        }
+    }
+
+    function render() {
+        user = JSON.parse(sessionStorage.getItem('sessao'));
+        if(!user) return;
+        
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appScreen').style.display = 'block';
+        document.getElementById('userName').innerText = user.nome;
+
+        if (user.role === 'admin') {
+            document.getElementById('userRole').innerText = "🛡️ Administrador";
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('alunoPanel').style.display = 'none';
+            document.getElementById('menuToggle').style.display = 'block';
+            document.getElementById('subtituloPrincipal').innerText = "PAINEL DE ADMINISTRAÇÃO GERAL";
+            carregarMuralAdmin();
+        } else {
+            document.getElementById('userRole').innerText = "🎓 Aluno - Sala " + user.turma;
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('alunoPanel').style.display = 'block';
+            document.getElementById('menuToggle').style.display = 'none';
+            document.getElementById('subtituloPrincipal').innerText = "MURAL DA SALA " + user.turma;
+            carregarMuralEstudante(user.turma);
+        }
+    }
+
+    function excluirMinhaConta() {
+        if (user.role === 'admin') {
+            return alert("A conta do Administrador Geral é protegida por código e não pode ser excluída.");
+        }
+
+        const confirmacao = confirm(`Atenção, ${user.nome}.\n\nTem certeza absoluta de que deseja EXCLUIR permanentemente a sua conta do sistema? Todos os seus dados de login serão perdidos.`);
+        
+        if (confirmacao) {
+            let usuariosCadastrados = JSON.parse(localStorage.getItem('db_usuarios')) || [];
+            let novosUsuarios = usuariosCadastrados.filter(u => u.email !== user.email);
+            localStorage.setItem('db_usuarios', JSON.stringify(novosUsuarios));
+            alert("Sua conta foi removida com sucesso. Redirecionando...");
+            logout();
+        }
+    }
+
+    function salvarNoDb(novaNoticia) {
+        let db = JSON.parse(localStorage.getItem('db_mural_v4')) || [];
+        db.push(novaNoticia);
+        localStorage.setItem('db_mural_v4', JSON.stringify(db));
+        alert("Publicado com sucesso!");
+    }
+
+    async function postarNoticia() {
+        const file = document.getElementById('newsFile').files[0];
+        const titulo = document.getElementById('newsTitle').value.trim();
+        const texto = document.getElementById('newsContent').value.trim();
+
+        if(!texto) return alert("O conteúdo não pode estar vazio!");
+
+        const noticia = {
+            id: Date.now(),
+            tipo: 'NOTICIA',
+            turma: document.getElementById('newsTurma').value,
+            autor: user.nome,
+            emailAutor: user.email,
+            titulo: titulo,
+            texto: texto,
+            link: document.getElementById('newsUrl').value,
+            midia: file ? await toBase64(file) : null,
+            midiaTipo: file ? file.type : null,
+            nomeArquivo: file ? file.name : ''
+        };
+        
+        salvarNoDb(noticia);
+        limparCamposAdmin();
+        carregarMuralAdmin();
+    }
+
+    async function postarAtividade() {
+        const file = document.getElementById('ativFile').files[0];
+        const titulo = document.getElementById('ativTitle').value.trim();
+        const texto = document.getElementById('ativContent').value.trim();
+
+        if(!texto) return alert("O conteúdo não pode estar vazio!");
+
+        const atividade = {
+            id: Date.now(),
+            tipo: 'ATIVIDADE',
+            turma: user.turma,
+            autor: user.nome,
+            emailAutor: user.email,
+            titulo: titulo,
+            texto: texto,
+            link: document.getElementById('ativUrl').value,
+            midia: file ? await toBase64(file) : null,
+            midiaTipo: file ? file.type : null,
+            nomeArquivo: file ? file.name : ''
+        };
+        
+        salvarNoDb(atividade);
+        limparCamposAluno();
+        carregarMuralEstudante(user.turma);
+    }
+
+    function carregarMuralAdmin() {
+        const mural = document.getElementById('mural');
+        const contador = document.getElementById('contadorPostagens');
+        mural.innerHTML = "";
+        let db = JSON.parse(localStorage.getItem('db_mural_v4')) || [];
+        
+        let postagensExibidas = db;
+        if (filtroFixoAdmin !== "TODOS") {
+            postagensExibidas = db.filter(item => item.turma === filtroFixoAdmin);
+            document.getElementById('muralTitulo').innerText = `Mural Admin - Sala ${filtroFixoAdmin}`;
+        } else {
+            document.getElementById('muralTitulo').innerText = "Mural Geral (Visão Global)";
+        }
+
+        let totalAtividadesAlunos = postagensExibidas.filter(item => item.tipo === 'ATIVIDADE').length;
+        contador.innerText = `${totalAtividadesAlunos} ${totalAtividadesAlunos === 1 ? 'atividade de aluno' : 'atividades de alunos'}`;
+
+        if(postagensExibidas.length === 0) {
+            mural.innerHTML = "<p style='text-align:center; color:#888; padding: 30px; background: white; border-radius: var(--radius); box-shadow: var(--shadow);'>Nenhuma postagem encontrada nesta seção.</p>";
+            return;
+        }
+
+        postagensExibidas.slice().reverse().forEach(item => {
+            const div = document.createElement('div');
+            div.className = item.tipo === 'ATIVIDADE' ? 'card card-atividade' : 'card card-admin';
+            
+            let badgeClass = item.tipo === 'ATIVIDADE' ? 'badge-atividade' : 'badge-admin';
+            let badgeText = item.tipo === 'ATIVIDADE' ? `📝 ATIVIDADE DE ALUNO (${item.turma})` : `NOTÍCIA OFICIAL (${item.turma})`;
+
+            let htmlMidia = "";
+            if(item.midia) {
+                if(item.midiaTipo.includes('image')) {
+                    htmlMidia = `<img src="${item.midia}" class="media-content">`;
+                } else if(item.midiaTipo.includes('video')) {
+                    htmlMidia = `<video src="${item.midia}" controls class="media-content"></video>`;
+                } else {
+                    htmlMidia = `
+                        <div style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #6c757d; border-radius: 6px;">
+                            📄 <strong>Arquivo anexado:</strong> ${item.nomeArquivo} <br>
+                            <a href="${item.midia}" download="${item.nomeArquivo}" class="news-link" style="display:inline-flex; margin-top:5px;">⬇️ Baixar/Abrir Trabalho</a>
+                        </div>
+                    `;
+                }
+            }
+            
+            let htmlAvaliacao = "";
+            if (item.tipo === 'ATIVIDADE') {
+                htmlAvaliacao = `
+                    <div style="margin-top: 15px; padding: 12px; background: #fffdf9; border: 1px dashed rgba(247, 127, 0, 0.3); border-radius: 6px; font-size: 0.95rem;">
+                        <strong>Nota:</strong> <span style="color:var(--atividade); font-weight:bold;">${item.nota || "Não avaliado"}</span> | 
+                        <strong>Feedback:</strong> <span style="color:#555;">${item.feedback || "Sem comentários"}</span>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = `
+                <div style="display:flex; justify-content:between; align-items:center;">
+                    <span class="${badgeClass}">${badgeText}</span>
+                </div>
+                <div style="margin-bottom:8px;"><small>Postado por: <strong>${item.autor}</strong></small></div>
+                ${item.titulo ? `<h4>${item.titulo}</h4>` : ''}
+                <p>${item.texto}</p>
+                ${item.link ? `<a href="${item.link}" target="_blank" class="news-link">🔗 Acessar Link</a>` : ''}
+                ${htmlMidia}
+                ${htmlAvaliacao}
+                <div class="actions">
+                    ${item.tipo === 'ATIVIDADE' ? `<button class="btn-action" style="color:var(--success);" onclick="avaliar(${item.id})">Avaliar</button>` : ''}
+                    <button class="btn-action" style="color:var(--primary);" onclick="editar(${item.id})">Editar</button>
+                    <button class="btn-action" style="color:var(--danger);" onclick="excluir(${item.id})">Excluir</button>
+                </div>
+            `;
+            mural.appendChild(div);
+        });
+    }
+
+    function filtrarMuralAdmin(turmaAlvo) {
+        filtroFixoAdmin = turmaAlvo;
+        carregarMuralAdmin();
+        document.getElementById('adminSidebar').classList.remove('active');
+    }
+
+    function carregarMuralEstudante(turmaEstudante) {
+        const mural = document.getElementById('mural');
+        const contador = document.getElementById('contadorPostagens');
+        mural.innerHTML = "";
+        document.getElementById('muralTitulo').innerText = "Quadro de Avisos e Atividades";
+        
+        let db = JSON.parse(localStorage.getItem('db_mural_v4')) || [];
+        let postagensFiltradas = db.filter(item => item.turma === turmaEstudante || item.turma === "GERAL");
+
+        let totalAtividadesAlunos = postagensFiltradas.filter(item => item.tipo === 'ATIVIDADE').length;
+        contador.innerText = `${totalAtividadesAlunos} ${totalAtividadesAlunos === 1 ? 'atividade enviada' : 'atividades enviadas'}`;
+
+        if(postagensFiltradas.length === 0) {
+            mural.innerHTML = "<p style='text-align:center; color:#888; padding: 40px; background: white; border-radius: var(--radius); box-shadow: var(--shadow);'>Nenhum aviso ou postagem para a sua turma no momento.</p>";
+            return;
+        }
+
+        postagensFiltradas.slice().reverse().forEach(item => {
+            const div = document.createElement('div');
+            div.className = item.tipo === 'ATIVIDADE' ? 'card card-atividade' : 'card';
+            
+            let badgeText = item.tipo === 'ATIVIDADE' ? '📝 ATIVIDADE DA SALA' : (item.turma === 'GERAL' ? '🌍 AVISO GERAL' : '📌 RECADOS DA SALA');
+            let badgeClass = item.tipo === 'ATIVIDADE' ? 'badge-atividade' : 'badge-user';
+
+            let htmlMidia = "";
+            if(item.midia) {
+                if(item.midiaTipo.includes('image')) {
+                    htmlMidia = `<img src="${item.midia}" class="media-content">`;
+                } else if(item.midiaTipo.includes('video')) {
+                    htmlMidia = `<video src="${item.midia}" controls class="media-content"></video>`;
+                } else {
+                    htmlMidia = `
+                        <div style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #6c757d; border-radius: 6px;">
+                            📄 <strong>Arquivo anexado:</strong> ${item.nomeArquivo} <br>
+                            <a href="${item.midia}" download="${item.nomeArquivo}" class="news-link" style="display:inline-flex; margin-top:5px;">⬇️ Baixar/Abrir Trabalho</a>
+                        </div>
+                    `;
+                }
+            }
+            
+            let htmlAvaliacao = "";
+            if (item.tipo === 'ATIVIDADE' && (item.nota || item.feedback)) {
+                htmlAvaliacao = `
+                    <div style="margin-top: 15px; padding: 15px; border-left: 4px solid var(--atividade); background: #fffdf9; border-radius: 4px;">
+                        <h5 style="margin:0 0 8px 0; font-size:1rem; font-weight:700; color:#333;">Feedback do Professor:</h5>
+                        <p style="margin:5px 0; font-size:0.95rem;"><strong>Nota:</strong> <span style="color:var(--atividade); font-weight:bold;">${item.nota}</span></p>
+                        <p style="margin:5px 0; font-size:0.95rem; color:#555;"><strong>Consideração:</strong> ${item.feedback}</p>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = `
+                <div>
+                    <span class="${badgeClass}">${badgeText}</span>
+                </div>
+                <div style="margin-bottom:8px;"><small>Enviado por: <strong>${item.autor}</strong></small></div>
+                ${item.titulo ? `<h4>${item.titulo}</h4>` : ''}
+                <p>${item.texto}</p>
+                ${item.link ? `<a href="${item.link}" target="_blank" class="news-link">🔗 Clique para Acessar o Link</a>` : ''}
+                ${htmlMidia}
+                ${htmlAvaliacao}
+            `;
+            mural.appendChild(div);
+        });
+    }
+
+    function avaliar(id) {
+        let db = JSON.parse(localStorage.getItem('db_mural_v4')) || [];
+        const index = db.findIndex(i => i.id === id);
+        if (index === -1) return;
+
+        const nota = prompt("Digite a nota (0-10):", db[index].nota || "");
+        if (nota === null) return;
+
+        const feedback = prompt("Digite uma consideração para o aluno:", db[index].feedback || "");
+        if (feedback === null) return;
+
+        db[index].nota = nota;
+        db[index].feedback = feedback;
+        localStorage.setItem('db_mural_v4', JSON.stringify(db));
+        carregarMuralAdmin();
+        alert("Avaliação registrada!");
+    }
+
+    function editar(id) {
+        let db = JSON.parse(localStorage.getItem('db_mural_v4')) || [];
+        const index = db.findIndex(i => i.id === id);
+        const item = db[index];
+        const novoTexto = prompt("Edite o conteúdo:", item.texto);
+        if (novoTexto !== null) {
+            db[index].texto = novoTexto;
+            localStorage.setItem('db_mural_v4', JSON.stringify(db));
+            carregarMuralAdmin();
+        }
+    }
+
+    function excluir(id) {
+        if(!confirm("Excluir postagem?")) return;
+        let db = JSON.parse(localStorage.getItem('db_mural_v4')) || [];
+        db = db.filter(i => i.id !== id);
+        localStorage.setItem('db_mural_v4', JSON.stringify(db));
+        carregarMuralAdmin();
+    }
+
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+
+    function limparCamposAdmin() {
+        document.getElementById('newsTitle').value = "";
+        document.getElementById('newsContent').value = "";
+        document.getElementById('newsUrl').value = "";
+        document.getElementById('newsFile').value = "";
+    }
+
+    function limparCamposAluno() {
+        document.getElementById('ativTitle').value = "";
+        document.getElementById('ativContent').value = "";
+        document.getElementById('ativUrl').value = "";
+        document.getElementById('ativFile').value = "";
+    }
+
+    function logout() { sessionStorage.clear(); location.reload(); }
+    
+    window.onload = () => {
+        document.getElementById('ano-atual').innerText = new Date().getFullYear();
+        if(sessionStorage.getItem('sessao')) render();
+    };
+</script>
+</body>
+</html>
